@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { TextField, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import emailjs from 'emailjs-com';
-import Register from './Register';
-import WeatherApp from './WeatherApp'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,52 +14,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SendEmail = () => {
+const SendEmail = ({ weatherData }) => {
   const classes = useStyles();
-  const [savedLocation, setSavedLocation] = useState('');
-  const [savedEmail, setSavedEmail] = useState('');
-  const [weatherData, setWeatherData] = useState(null);
+  const [email, setEmail] = useState('');
 
-  useEffect(() => {
-    // Load saved location and email from storage (e.g., localStorage) on component mount
-
-    const location = localStorage.getItem('location');
-    const email = localStorage.getItem('email');
-
-    if (location && email) {
-      setSavedLocation(location);
-      setSavedEmail(email);
-    }
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (savedLocation && savedEmail) {
-      <WeatherApp />
-
-        const mockWeatherData = {
-          location: { name: savedLocation },
-          current: { temp_c: 25 }, // Example temperature for the saved location
-        };
-
-        setWeatherData(mockWeatherData);
-
-        if (mockWeatherData.current.temp_c > 23) {
-          sendEmail();
-        }
-      }
-    }, 3600000); // Check every 1 hour (3600000 milliseconds)
-
-    return () => clearInterval(interval);
-  }, [savedLocation, savedEmail]);
-
-  const handleSave = (location, email) => {
-    // Save location and email to storage (e.g., localStorage) and state
-
-    localStorage.setItem('location', location);
-    localStorage.setItem('email', email);
-    setSavedLocation(location);
-    setSavedEmail(email);
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
   };
 
   const sendEmail = () => {
@@ -68,9 +27,9 @@ const SendEmail = () => {
     const emailTemplateId = 'template_wjojwcb'; // Replace with your own EmailJS template ID
     const emailUserId = 'zll7WBXOsxfWM6wib'; // Replace with your own EmailJS user ID
 
-    if (weatherData && savedEmail) {
+    if (weatherData && weatherData.current.temp_c > 24 && email) {
       const templateParams = {
-        to_email: savedEmail,
+        to_email: email,
         location: weatherData.location.name,
         temperature: weatherData.current.temp_c,
       };
@@ -88,9 +47,20 @@ const SendEmail = () => {
 
   return (
     <div className={classes.root}>
-      <Register onSave={handleSave} />
+      <TextField
+        id="emailInput"
+        type="email"
+        value={email}
+        onChange={handleEmailChange}
+        label="Email"
+        placeholder="Enter email"
+      />
+      <Button variant="contained" color="primary" onClick={sendEmail}>
+        Send Email
+      </Button>
     </div>
   );
 };
 
 export default SendEmail;
+

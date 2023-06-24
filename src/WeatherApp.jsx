@@ -28,13 +28,15 @@ const WeatherApp = () => {
   };
   return (
     <div className={classes.container}>
-      
+      <p>Check the temperature of your city:</p>
       <div className={classes.inputContainer}>
         <label htmlFor="cityInput">City:</label>
         <input id="cityInput" type="text" value={city} onChange={handleCityChange} placeholder="Enter city" className={classes.input} />
       </div>
      
       <button onClick={fetchWeather} className={classes.button}>Confirm</button>
+      <br />
+      <p>Give your email! And you will receive a notification if the your city is hoter that 25°C</p>
       <SendEmail weatherData={weatherData} />
       {weatherData && (
         <div className={classes.weatherInfo}>
